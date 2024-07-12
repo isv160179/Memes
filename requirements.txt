@@ -45,6 +45,7 @@ mixer==7.2.2
 multidict==6.0.5
 packaging==21.3
 passlib==1.7.4
+pillow==10.4.0
 pluggy==1.0.0
 py==1.11.0
 pyasn1==0.5.1
