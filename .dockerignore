@@ -1,0 +1,6 @@
+venv
+downloads
+tests
+.git
+minio.db
+test.db

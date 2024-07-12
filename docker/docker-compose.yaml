@@ -1,0 +1,51 @@
+version: '3.7'
+
+services:
+
+  memes:
+    build: ../
+    depends_on:
+      - minio
+      - postgres
+      - createbuckets
+    ports:
+      - "8000:80"
+    volumes:
+      - download_files:/memes/downloads
+
+  postgres:
+    image: postgres
+    environment:
+      - POSTGRES_DB=db
+      - POSTGRES_USER=ps_user
+      - POSTGRES_PASSWORD=ps_password
+    ports:
+      - "5432:5432"
+
+
+  minio:
+    image: minio/minio
+    ports:
+      - "9000:9000"
+
+    environment:
+      - "MINIO_ACCESS_KEY=minIOAdmin"
+      - "MINIO_SECRET_KEY=pass_MinIO@Admin"
+    command: server /data
+    volumes:
+      - minio_data:/data
+
+  createbuckets:
+    image: minio/mc
+    depends_on:
+      - minio
+    entrypoint: >
+      /bin/sh -c "
+      /usr/bin/mc alias set myminio http://minio:9000 minIOAdmin pass_MinIO@Admin;
+      /usr/bin/mc mb myminio/memes;
+      /usr/bin/mc policy set public myminio/memes;
+      exit 0;
+      "
+volumes:
+  minio_data:
+  download_files:
