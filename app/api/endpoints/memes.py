@@ -1,13 +1,11 @@
-import os
-from datetime import datetime
-from pathlib import Path
 from typing import Annotated
 
+from PIL import Image
 from fastapi import APIRouter, UploadFile, Form, Query, Depends
 from fastapi_pagination import Page, paginate
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.validators import check_meme_exist
+from app.api.validators import check_meme_exist, check_image
 from app.core.config import settings
 from app.core.db import get_async_session
 from app.crud.memes import create, get_all, delete, update
@@ -40,6 +38,7 @@ async def create_meme(
     ),
     session: AsyncSession = Depends(get_async_session),
 ):
+    check_image(file.file)
     file_name = await minio_handler.upload_file(file)
     new_obj_dict = {
         'title': text,
